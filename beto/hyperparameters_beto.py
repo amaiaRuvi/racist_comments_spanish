@@ -73,6 +73,9 @@ def find_hyperparameters_beto(trial):
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         warmup_steps=warmup_steps,
+        logging_steps=500,
+        save_steps=1000,
+        save_total_limit=2,
         report_to=[],
         fp16=True
     )
@@ -88,8 +91,10 @@ def find_hyperparameters_beto(trial):
     )
 
     # Entrenar el modelo
+    print("Training...")
     trainer.train()
     # Evaluar el modelo
+    print("Evaluating...")
     eval_result = trainer.evaluate()
     # Optuna maximiza, así que devolvemos la métrica negativa si se minimiza
     return eval_result['eval_f1']
