@@ -87,6 +87,7 @@ def train_evaluate_robertuito_hate_speech():
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         warmup_steps=warmup_steps,
+        report_to=[],
         fp16=True
     )
 
@@ -115,8 +116,8 @@ def train_evaluate_robertuito_hate_speech():
     trainer = Trainer(
         model=model,
         args=training_args,
-        eval_dataset=encoded_data["test"],  # Conjunto de evaluación
-        compute_metrics=compute_metrics,  # Función para calcular métricas
+        eval_dataset=encoded_data["test"],
+        compute_metrics=compute_metrics,
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer=tokenizer, padding="longest")
     )

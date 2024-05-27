@@ -1,5 +1,5 @@
 """
-python.exe -m pip install datasets transformers[torch] torch pysentimiento scikit-learn fire optuna
+python.exe -m pip install datasets transformers[torch] torch pysentimiento scikit-learn fire optuna, torch
 """
 from datasets import load_dataset
 from sklearn.metrics import classification_report
