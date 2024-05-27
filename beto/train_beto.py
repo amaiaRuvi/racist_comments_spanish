@@ -95,10 +95,26 @@ def train_evaluate_beto():
     print("Training Loss:", training_output.training_loss)
     print("Metrics:", training_output.metrics)
 
-    # Evaluación del modelo
-    trainer.evaluate(encoded_data['test'])
+    # Evaluar el modelo con el conjunto de validación: se queda con el mejor valor
+    print("Evaluating with validation set.")
+    trainer.evaluate()
+
+    print("Predictions:")
+    test_predictions = trainer.predict(encoded_data["test"])
+    y_true = test_predictions.label_ids
+
+    logits = test_predictions.predictions
+    # Convertir los logits a un tensor de PyTorch
+    logits_tensor = torch.tensor(logits)
+    # Aplicar la función softmax a los logits para obtener probabilidades
+    probabilities = F.softmax(logits_tensor, dim=1)
+    # Obtener las clases predichas (índice de la probabilidad más alta)
+    y_pred = torch.argmax(probabilities, dim=1)
+    reporte = classification_report(y_true, y_pred, output_dict=False)
+    print(reporte)
 
     # Crear el `Trainer` con el conjunto de evaluación y la función para métricas
+    print("Test evaluating with trainer:")
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -112,19 +128,6 @@ def train_evaluate_beto():
     print("Evaluating the model...")
     trainer.evaluate()
     print("Evaluation process is finished.")
-
-    test_predictions = trainer.predict(encoded_data["test"])
-    y_true = test_predictions.label_ids
-
-    logits = test_predictions.predictions
-    # Convertir los logits a un tensor de PyTorch
-    logits_tensor = torch.tensor(logits)
-    # Aplicar la función softmax a los logits para obtener probabilidades
-    probabilities = F.softmax(logits_tensor, dim=1)
-    # Obtener las clases predichas (índice de la probabilidad más alta)
-    y_pred = torch.argmax(probabilities, dim=1)
-    reporte = classification_report(y_true, y_pred, output_dict=False)
-    print(reporte)
 
 
 if __name__ == '__main__':

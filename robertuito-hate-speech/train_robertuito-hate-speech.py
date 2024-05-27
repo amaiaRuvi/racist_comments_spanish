@@ -87,6 +87,10 @@ def train_evaluate_robertuito_hate_speech():
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         warmup_steps=warmup_steps,
+        eval_accumulation_steps=1,
+        logging_steps=500,
+        save_steps=1000,
+        save_total_limit=2,
         report_to=[],
         fp16=True
     )
@@ -109,10 +113,20 @@ def train_evaluate_robertuito_hate_speech():
     print("Training Loss:", training_output.training_loss)
     print("Metrics:", training_output.metrics)
 
-    # Evaluación del modelo
-    trainer.evaluate(encoded_data['test'])
+    # Evaluar el modelo con el conjunto de validación: se queda con el mejor valor
+    print("Evaluating with validation set.")
+    trainer.evaluate()
+
+    # Predicciones
+    print("Predictions:")
+    test_predictions = trainer.predict(encoded_data["test"])
+    y_true = test_predictions.label_ids[:, 0]
+    y_pred = (test_predictions.predictions > 0)[:, 0]
+    reporte = classification_report(y_true, y_pred, output_dict=False)
+    print(reporte)
 
     # Crear el `Trainer` con el conjunto de evaluación y la función para métricas
+    print("Test evaluating with trainer:")
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -126,12 +140,6 @@ def train_evaluate_robertuito_hate_speech():
     print("Evaluating the model...")
     trainer.evaluate()
     print("Evaluation process is finished.")
-
-    test_predictions = trainer.predict(encoded_data["test"])
-    y_true = test_predictions.label_ids[:, 0]
-    y_pred = (test_predictions.predictions > 0)[:, 0]
-    reporte = classification_report(y_true, y_pred, output_dict=False)
-    print(reporte)
 
 
 if __name__ == '__main__':
