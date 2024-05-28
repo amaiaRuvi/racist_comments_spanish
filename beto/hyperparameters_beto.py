@@ -64,8 +64,8 @@ def find_hyperparameters_beto(trial):
     warmup_steps = int(warmup_proportion * total_steps)
 
     training_args = TrainingArguments(
-        output_dir='./output/tuned-BETO',
-        logging_dir='./logs/tuned-BETO',
+        output_dir='./output/optimized-BETO',
+        logging_dir='./logs/optimized-BETO',
         evaluation_strategy="epoch",
         num_train_epochs=epochs,
         per_device_train_batch_size=batch_size,
