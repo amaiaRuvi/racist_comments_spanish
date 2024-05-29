@@ -68,11 +68,19 @@ def train_evaluate_robertuito_hate_speech():
     encoded_data = preprocessed_data.map(custom_tokenizer, batched=True)
     encoded_data = encoded_data.remove_columns(['link', 'title', 'comment', 'racist'])
 
-    # Aquí cambiaríamos los hiperparámetros
-    epochs = 5  # 8
-    batch_size = 16  # 8
-    learning_rate = 2e-5  # 4.5e-5
-    weight_decay = 0.01  # 0.16
+    # Hiperparámetros iniciales
+    """
+    epochs = 5
+    batch_size = 16
+    learning_rate = 2e-5
+    weight_decay = 0.01
+    """
+    # Optimized parameters
+    epochs = 5
+    batch_size = 16
+    learning_rate = 4e-5
+    weight_decay = 0.12
+
     warmup_proportion = 0.1  # 0.2
     total_steps = (epochs * len(dataset['train'])) / batch_size
     warmup_steps = int(warmup_proportion * total_steps)

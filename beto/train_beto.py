@@ -7,6 +7,7 @@ import fire
 import torch
 import torch.nn.functional as F
 
+
 def compute_metrics(pred):
     y_true = pred.label_ids
     y_pred = pred.predictions.argmax(-1)
@@ -54,12 +55,21 @@ def train_evaluate_beto():
     encoded_data = preprocessed_data.map(custom_tokenizer, batched=True)
     encoded_data = encoded_data.remove_columns(['link', 'title', 'comment', 'racist'])
 
-    # Aquí cambiaríamos los hiperparámetros
-    epochs = 5  # 8
-    batch_size = 16  # 8
-    learning_rate = 2e-5  # 4.5e-5
-    weight_decay = 0.01  # 0.16
-    warmup_proportion = 0.1  # 0.2
+    # Hiperparámetros iniciales
+    """
+    epochs = 5
+    batch_size = 16
+    learning_rate = 2e-5
+    weight_decay = 0.01
+    """
+
+    # Optimized parameters
+    epochs = 8
+    batch_size = 8
+    learning_rate = 2.5e-5
+    weight_decay = 0.3
+
+    warmup_proportion = 0.1
     total_steps = (epochs * len(dataset['train'])) / batch_size
     warmup_steps = int(warmup_proportion * total_steps)
 
@@ -73,6 +83,10 @@ def train_evaluate_beto():
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         warmup_steps=warmup_steps,
+        eval_accumulation_steps=1,
+        logging_steps=500,
+        save_steps=1000,
+        save_total_limit=2,
         report_to=[],
         fp16=True
     )

@@ -70,10 +70,11 @@ def find_hyperparameters_robertuito_hate_speech(trial):
     encoded_data = encoded_data.remove_columns(['link', 'title', 'comment', 'racist'])
 
     epochs = trial.suggest_int("epochs", 3, 10)
-    batch_size = trial.suggest_categorical("batch_size", [8, 16, 32, 64])
+    batch_size = trial.suggest_categorical("batch_size", [8, 16, 32])
     learning_rate = trial.suggest_float("learning_rate", 1e-5, 5e-5, step=0.000005)
     weight_decay = trial.suggest_float("weight_decay", 0.01, 0.3, step=0.01)
-    warmup_proportion = trial.suggest_float("warmup_proportion", 0.05, 0.3, step=0.05)
+
+    warmup_proportion = 0.1
     total_steps = (epochs * len(dataset['train'])) / batch_size
     warmup_steps = int(warmup_proportion * total_steps)
 
@@ -87,6 +88,11 @@ def find_hyperparameters_robertuito_hate_speech(trial):
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         warmup_steps=warmup_steps,
+        eval_accumulation_steps=1,
+        logging_steps=500,
+        save_steps=1000,
+        save_total_limit=2,
+        report_to=[],
         fp16=True
     )
 
@@ -110,7 +116,7 @@ def find_hyperparameters_robertuito_hate_speech(trial):
 
 def get_best_hyperparameters():
     study = optuna.create_study(direction="maximize")
-    study.optimize(find_hyperparameters_robertuito_hate_speech, n_trials=25)
+    study.optimize(find_hyperparameters_robertuito_hate_speech, n_trials=10)
 
     # Imprimir los mejores hiperparámetros encontrados
     print("Best hyperparameters: ", study.best_params)

@@ -84,10 +84,11 @@ def tune_new_beto_model():
     encoded_data = encoded_data.remove_columns(['link', 'title', 'comment', 'racist'])
 
     # Aquí cambiaríamos los hiperparámetros
-    epochs = 9
-    batch_size = 32
-    learning_rate = 3.5e-5
-    weight_decay = 0.25
+    epochs = 8
+    batch_size = 8
+    learning_rate = 2.5e-5
+    weight_decay = 0.3
+
     warmup_proportion = 0.1
     total_steps = (epochs * len(dataset['train'])) / batch_size
     warmup_steps = int(warmup_proportion * total_steps)
@@ -143,13 +144,13 @@ def tune_new_beto_model():
     reporte = classification_report(y_true, y_pred, output_dict=False)
     print(reporte)
 
-    new_model_name = "beto-finetuned-racist-comments-spanish"
+    new_model_name = "beto-finetuned-racist-news-comments-spanish"
     new_model_path = f"./models/{new_model_name}"
     model.save_pretrained(new_model_path)
     tokenizer.save_pretrained(new_model_path)
 
-    model.push_to_hub("amaiaruvi/beto-finetuned-racist-comments-spanish")
-    tokenizer.push_to_hub("amaiaruvi/beto-finetuned-racist-comments-spanish")
+    model.push_to_hub("amaiaruvi/beto-finetuned-racist-news-comments-spanish")
+    tokenizer.push_to_hub("amaiaruvi/beto-finetuned-racist-news-comments-spanish")
 
 
 if __name__ == '__main__':
