@@ -96,7 +96,7 @@ def evaluate_beto_racist_comments_spanish():
 
     print("Loading dataset...")
     rioplatense_database_checkpoint = "amaiaruvi/racist_tweets_spanish_rioplatense"
-    rioplatense_dataset = load_dataset(database_checkpoint)
+    rioplatense_dataset = load_dataset(rioplatense_database_checkpoint)
 
     print("Preprocessing data...")
     preprocessed_data_rioplatense = rioplatense_dataset.map(lambda ex: {
@@ -107,7 +107,7 @@ def evaluate_beto_racist_comments_spanish():
 
     print("Tokenizing data...")
     encoded_data_rioplatense = preprocessed_data_rioplatense.map(custom_tokenizer, batched=True)
-    encoded_data_rioplatense = encoded_data_rioplatense.remove_columns(['link', 'title', 'comment', 'racist'])
+    encoded_data_rioplatense = encoded_data_rioplatense.remove_columns(['title', 'comment', 'racist'])
 
     print("Predictions:")
     test_predictions_rioplatense = trainer.predict(encoded_data_rioplatense["test"])
